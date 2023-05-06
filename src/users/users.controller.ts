@@ -14,13 +14,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { UserInfo } from './userInfo';
+import { CreateUserPipe } from './pipe/createUser.pipe';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  async createUser(@Body() dto: CreateUserDto): Promise<void> {
+  async createUser(@Body(CreateUserPipe) dto: CreateUserDto): Promise<void> {
     await this.usersService.createUser(dto);
   }
 

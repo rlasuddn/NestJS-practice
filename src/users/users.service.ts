@@ -12,12 +12,10 @@ export class UsersService {
   constructor(private readonly emailService: EmailService) {}
 
   async createUser(dto: CreateUserDto) {
-    await this.checkUserExists(dto.email);
-
-    const signupVerifyToken = uuid.v1();
-
-    await this.saveUser(dto, signupVerifyToken);
-    await this.sendMemberJoinEmail(dto.email, signupVerifyToken);
+    // await this.checkUserExists(dto.email);
+    // const signupVerifyToken = uuid.v1();
+    // await this.saveUser(dto, signupVerifyToken);
+    // await this.sendMemberJoinEmail(dto.email, signupVerifyToken);
   }
 
   private checkUserExists(email: string) {
