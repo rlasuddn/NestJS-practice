@@ -1,0 +1,11 @@
+1. Hello, this is [name]. - 안녕하세요, [이름]입니다. (annyeonghaseyo, [ireum]imnida)
+2. Can I speak to [name]? - [이름]씨 있으세요? ([ireum]ssi isseuseyo?)
+3. I'm sorry, I think you have the wrong number. - 죄송합니다, 잘못 걸린 것 같습니다. (joesonghamnida, jalmot geollin geot gatseumnida)
+4. Could you please repeat that? - 다시 말씀해 주시겠어요? (dasi malsseumhae jusigesseoyo?)
+5. Thank you for calling. - 전화 주셔서 감사합니다. (jeonhwa jusyeoseo gamsahamnida)
+
+1. Apple - 사과 (sa-gwa)
+2. Book - 책 (chaek)
+3. Cat - 고양이 (go-yang-i)
+4. Water - 물 (mul)
+5. Sun - 태양 (tae-yang)
