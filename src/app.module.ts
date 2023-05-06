@@ -15,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
           : process.env.NODE_ENV === 'stage'
           ? '.stage.env'
           : '.env',
+      isGlobal: true,
     }), // 개발환경에 따라 ConfigModule 동적 생성
   ],
   controllers: [AppController],
