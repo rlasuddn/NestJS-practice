@@ -1,29 +1,97 @@
 import * as uuid from 'uuid';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { EmailService } from 'src/email/email.service';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { UserInfo } from './userInfo';
+import { UserEntity } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { ulid } from 'ulid';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    @InjectRepository(UserEntity) //유저 저장소 주입
+    private readonly userRepository: Repository<UserEntity>,
+    private dataSource: DataSource,
+  ) {}
 
   async createUser(dto: CreateUserDto) {
-    // await this.checkUserExists(dto.email);
-    // const signupVerifyToken = uuid.v1();
-    // await this.saveUser(dto, signupVerifyToken);
+    const userExist = await this.checkUserExists(dto.email);
+    if (userExist)
+      throw new UnprocessableEntityException(
+        '해당 이메일로는 가입할 수 없습니다.',
+      );
+
+    const signupVerifyToken = uuid.v1();
+    await this.saveUserUsingTransaction(dto, signupVerifyToken);
+
     // await this.sendMemberJoinEmail(dto.email, signupVerifyToken);
   }
 
-  private checkUserExists(email: string) {
-    return false; // TODO: DB 연동 후 구현
+  private async checkUserExists(email: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: { email: email },
+    });
+    return user !== null;
   }
 
-  private saveUser(dto: CreateUserDto, signupVerifyToken: string) {
-    return; // TODO: DB 연동 후 구현
+  //QueryRunner을 이용한 트랜잭션
+  private async saveUserUsingQueryRunner(
+    dto: CreateUserDto,
+    signupVerifyToken: string,
+  ) {
+    const queryRunner = this.dataSource.createQueryRunner(); //QueryRunner 객체 생성
+
+    await queryRunner.connect(); //QueryRunner에서 DB에 연결 후 트랜잭션 시작
+    await queryRunner.startTransaction();
+
+    try {
+      const user = new UserEntity();
+      user.id = ulid();
+      user.name = dto.name;
+      user.email = dto.email;
+      user.password = dto.password;
+      user.signupVertifyToken = signupVerifyToken;
+
+      await queryRunner.manager.save(user);
+
+      throw new InternalServerErrorException();
+
+      await queryRunner.commitTransaction(); //DB 작업을 수행한 후 커밋하여 영속화
+    } catch (error) {
+      //위 과정에서 에러 발생시 롤백
+      await queryRunner.rollbackTransaction();
+    } finally {
+      //직접 생성한 QueryRunner는 해제시켜주어야 함
+      await queryRunner.release();
+    }
+  }
+
+  //transaction 메서드를 이용한 트랜잭션
+  private async saveUserUsingTransaction(
+    dto: CreateUserDto,
+    signupVerifyToken: string,
+  ) {
+    await this.dataSource.transaction(async (manager) => {
+      const user = new UserEntity();
+      user.id = ulid();
+      user.name = dto.name;
+      user.email = dto.email;
+      user.password = dto.password;
+      user.signupVertifyToken = signupVerifyToken;
+
+      await manager.save(user);
+      // throw new InternalServerErrorException('트랜잭션 오류');
+    });
   }
 
   private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {
