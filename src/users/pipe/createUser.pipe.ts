@@ -11,11 +11,11 @@ import { validate } from 'class-validator';
 export class CreateUserPipe implements PipeTransform<any> {
   async transform(value: any, { metatype }: ArgumentMetadata) {
     if (!metatype || !this.toValidate(metatype)) return value; // metaType이 파이프가 지원하는 타입인지 검사
-    console.log(value, metatype);
+    // console.log(value, metatype);
     const object = plainToClass(metatype, value); //자바스크립트 객체를 클래스 객체로 변경
-    console.log(object);
+    // console.log(object);
     const errors = await validate(object); //객체에 대한 유효성 검사
-    console.log(errors);
+    // console.log(errors);
     if (errors.length > 0) throw new BadRequestException('Validation failed');
 
     return value;
