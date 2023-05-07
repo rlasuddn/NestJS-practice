@@ -14,6 +14,9 @@ export interface User {
 @Injectable()
 export class AuthService {
   constructor(private readonly configService: ConfigService) {}
+  get() {
+    console.log('hello');
+  }
 
   async login(user: User) {
     const payload = { ...user };
@@ -25,7 +28,7 @@ export class AuthService {
     });
   }
 
-  async verify(jwtString: string) {
+  verify(jwtString: string) {
     try {
       const payload = jwt.verify(
         jwtString,

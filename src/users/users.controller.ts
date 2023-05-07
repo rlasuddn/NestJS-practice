@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,6 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { CreateUserPipe } from './pipe/createUser.pipe';
 import { AuthService } from 'src/auth/auth.service';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -22,12 +24,9 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  async getUserInfo(@Headers() headers: any, @Param('id') userId: string) {
-    const jwtString = headers.authorization.split('Bearer ')[1]; //헤더에서 JWT 파싱
-
-    this.authService.verify(jwtString); //JWT가 서버에서 발급한 것인지 검증
-
+  async getUserInfo(@Param('id') userId: string) {
     return await this.usersService.getUserInfo(userId); //유저 정보 응답
   }
 
