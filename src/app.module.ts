@@ -1,10 +1,20 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { EmailService } from './email/email.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  LoggerMiddleware,
+  LoggerMiddleware2,
+} from './common/middlewares/logger.middleware';
+import { UsersController } from './users/users.controller';
 
 @Module({
   imports: [
@@ -32,4 +42,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [AppController],
   providers: [AppService, EmailService],
 })
-export class AppModule {}
+
+//미들웨어 설정
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    // consumer.apply(LoggerMiddleware).forRoutes('*');
+    //2개의 미들웨어 적용 (나열된 순서대로 적용) 컨트롤러 클래스를 주어 동작 가능
+    consumer
+      .apply(LoggerMiddleware, LoggerMiddleware2)
+      //특정 엔드포인트, 메서드 로깅 제외
+      // .exclude({ path: '/users', method: RequestMethod.GET })
+      .forRoutes(UsersController);
+  }
+}

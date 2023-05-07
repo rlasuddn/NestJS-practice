@@ -116,11 +116,11 @@ export class UsersService {
     throw new Error('Method not implemented');
   }
 
-  async getUserInfo(userId: string): Promise<UserInfo> {
+  async getUserInfo() {
     // TODO
     // 1. userId를 가진 유저가 존재하는지 DB에서 확인 후 없으면 에러
     // 2. 조회된 데이터를 UserInfo 타입으로 응답
-    throw new Error('Method not implemented');
+    return 'getUserInfo';
   }
 
   findAll() {

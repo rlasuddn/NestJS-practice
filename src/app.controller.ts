@@ -39,7 +39,7 @@ export class AppController {
     return this.appService.findOne(id);
   }
 
-  @Get(':id')
+  @Get('v1/:id')
   ParseIntPipe1(@Param('id', ParseIntPipe) id: number) {
     console.log('controller로 요청이 오는가?');
     return this.appService.findOne(id);

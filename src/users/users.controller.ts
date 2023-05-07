@@ -19,6 +19,10 @@ import { CreateUserPipe } from './pipe/createUser.pipe';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+  @Get()
+  async getUserInfo() {
+    return await this.usersService.getUserInfo();
+  }
 
   @Post()
   async createUser(@Body(CreateUserPipe) dto: CreateUserDto): Promise<void> {
@@ -33,11 +37,6 @@ export class UsersController {
   @Post('login')
   async login(@Body() dto: UserLoginDto): Promise<string> {
     return await this.usersService.login(dto);
-  }
-
-  @Get(':id')
-  async getUserInfo(@Param('id') userId: string): Promise<UserInfo> {
-    return await this.usersService.getUserInfo(userId);
   }
 
   @Patch(':id')
