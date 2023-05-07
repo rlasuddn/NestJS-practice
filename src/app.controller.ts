@@ -8,7 +8,7 @@ import {
   DefaultValuePipe,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ValidationPipe } from './common/pipe/validation.pipe';
+import { ValidationPipe } from './common/pipes/validation.pipe';
 
 @Controller()
 export class AppController {

@@ -15,6 +15,9 @@ import {
   LoggerMiddleware2,
 } from './common/middlewares/logger.middleware';
 import { UsersController } from './users/users.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './common/guards/auth.guard';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -38,9 +41,15 @@ import { UsersController } from './users/users.controller';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: process.env.DB_SYNC === 'true',
     }),
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, EmailService],
+  providers: [
+    AppService,
+    EmailService,
+    //가드 종속성 주입
+    // { provide: APP_GUARD, useClass: AuthGuard },
+  ],
 })
 
 //미들웨어 설정
