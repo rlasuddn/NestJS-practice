@@ -5,7 +5,13 @@ import { logger3 } from './common/middlewares/logger.middleware';
 import { AuthGuard } from './common/guards/auth.guard';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger:
+      process.env.NODE_ENV === 'production'
+        ? ['error', 'warn', 'log']
+        : ['error', 'warn', 'log', 'verbose', 'debug'],
+  });
+
   //ValidationPipe를 모든 핸들러에 전역으로 설정
   //class-transform 적용을 위해 transform 속성 true
   app.useGlobalPipes(

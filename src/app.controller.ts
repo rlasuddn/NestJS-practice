@@ -14,6 +14,11 @@ import { ValidationPipe } from './common/pipes/validation.pipe';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Get()
+  getHello() {
+    return this.appService.getHello();
+  }
+
   @Get() // DefaultValuePipe 인수의 값에 기본값 설정
   getLists(
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number,
