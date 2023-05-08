@@ -19,6 +19,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './common/guards/auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './logger/logger.module';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
+import * as winston from 'winston';
 
 @Module({
   imports: [
@@ -43,7 +48,24 @@ import { LoggerModule } from './logger/logger.module';
       synchronize: process.env.DB_SYNC === 'true',
     }),
     AuthModule,
+
+    //커스텀 로거
     LoggerModule,
+
+    //윈스턴 로거
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            nestWinstonModuleUtilities.format.nestLike('MyApp', {
+              prettyPrint: true,
+            }),
+          ),
+        }),
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [
