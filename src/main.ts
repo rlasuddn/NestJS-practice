@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { logger3 } from './common/middlewares/logger.middleware';
 import { AuthGuard } from './common/guards/auth.guard';
+import { CustomLogger } from './logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -11,6 +12,9 @@ async function bootstrap() {
         ? ['error', 'warn', 'log']
         : ['error', 'warn', 'log', 'verbose', 'debug'],
   });
+
+  //커스텀 로거 전역 사용
+  // app.useLogger(app.get(CustomLogger));
 
   //ValidationPipe를 모든 핸들러에 전역으로 설정
   //class-transform 적용을 위해 transform 속성 true

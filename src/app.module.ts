@@ -18,6 +18,7 @@ import { UsersController } from './users/users.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './common/guards/auth.guard';
 import { AuthModule } from './auth/auth.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: process.env.DB_SYNC === 'true',
     }),
     AuthModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [
