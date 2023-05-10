@@ -10,6 +10,9 @@ import {
   UseGuards,
   Inject,
   InternalServerErrorException,
+  UseFilters,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,7 +23,10 @@ import { AuthService } from 'src/auth/auth.service';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { HttpExceptionFilter } from 'src/exception/exception-filter';
 
+//특정 컨트롤러에 예외필터 적용
+// @UseFilters(HttpExceptionFilter)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -31,8 +37,11 @@ export class UsersController {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  //특정 엔드포인트에 예외필터 적용
+  // @UseFilters(HttpExceptionFilter)
   @Get()
   printWinston() {
+    throw new HttpException('hi', HttpStatus.BAD_GATEWAY);
     this.logger.error('error: ', { error: 'hi' });
     this.logger.warn('warn: ', { warn: 'hi' });
     this.logger.info('info: ', { info: 'hi' });

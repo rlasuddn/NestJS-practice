@@ -23,6 +23,7 @@ import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
+import { ExceptionModule } from './exception/exception.module';
 import * as winston from 'winston';
 
 @Module({
@@ -66,6 +67,8 @@ import * as winston from 'winston';
         }),
       ],
     }),
+
+    ExceptionModule,
   ],
   controllers: [AppController],
   providers: [

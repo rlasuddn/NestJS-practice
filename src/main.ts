@@ -10,6 +10,7 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import * as winston from 'winston';
+import { HttpExceptionFilter } from './exception/exception-filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -28,6 +29,8 @@ async function bootstrap() {
     // }),
   });
 
+  //애플리케이션 전체 예외필터 적용
+  // app.useGlobalFilters(new HttpExceptionFilter());
   //윈스턴 로거 전역 사용
   // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
@@ -38,6 +41,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
   //로깅 전역 설정 use()는 클래스를 인수로 받을 수 없어 함수 전달
   app.use(logger3);
 
