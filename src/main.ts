@@ -4,18 +4,32 @@ import { ValidationPipe } from '@nestjs/common';
 import { logger3 } from './common/middlewares/logger.middleware';
 import { AuthGuard } from './common/guards/auth.guard';
 import { CustomLogger } from './logger/logger.service';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WINSTON_MODULE_NEST_PROVIDER,
+  WinstonModule,
+} from 'nest-winston';
+import * as winston from 'winston';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger:
-      process.env.NODE_ENV === 'production'
-        ? ['error', 'warn', 'log']
-        : ['error', 'warn', 'log', 'verbose', 'debug'],
+    // logger: WinstonModule.createLogger({
+    //   transports: [
+    //     new winston.transports.Console({
+    //       level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
+    //       format: winston.format.combine(
+    //         winston.format.timestamp(),
+    //         nestWinstonModuleUtilities.format.nestLike('MyApp', {
+    //           prettyPrint: true,
+    //         }),
+    //       ),
+    //     }),
+    //   ],
+    // }),
   });
 
   //윈스턴 로거 전역 사용
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+  // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   //ValidationPipe를 모든 핸들러에 전역으로 설정
   //class-transform 적용을 위해 transform 속성 true
