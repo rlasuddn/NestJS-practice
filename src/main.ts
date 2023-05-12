@@ -11,6 +11,7 @@ import {
 } from 'nest-winston';
 import * as winston from 'winston';
 import { HttpExceptionFilter } from './exception/exception-filter';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -28,6 +29,9 @@ async function bootstrap() {
     //   ],
     // }),
   });
+
+  //인터셉터 전역 설정
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   //애플리케이션 전체 예외필터 적용
   // app.useGlobalFilters(new HttpExceptionFilter());
