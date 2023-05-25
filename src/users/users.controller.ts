@@ -24,6 +24,9 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { HttpExceptionFilter } from 'src/exception/exception-filter';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateUserCommand } from './commands/create-user-commend';
+import { GetUserInfoQuery } from './queries/user-info-query';
 
 //특정 컨트롤러에 예외필터 적용
 // @UseFilters(HttpExceptionFilter)
@@ -35,6 +38,11 @@ export class UsersController {
 
     //WINSTON_MODULE_NEST_PROVIDER 토큰으로 Logger 객체 주입
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+
+    //커맨드 주입
+    private commandBus: CommandBus,
+    //쿼리 주입
+    private queryBus: QueryBus,
   ) {}
 
   //특정 엔드포인트에 예외필터 적용
@@ -54,14 +62,19 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Get(':id')
   async getUserInfo(@Param('id') userId: string) {
-    return await this.usersService.getUserInfo(userId); //유저 정보 응답
+    // return await this.usersService.getUserInfo(userId); //유저 정보 응답
+
+    const getUserInfoQuery = new GetUserInfoQuery(userId);
+    return this.queryBus.execute(getUserInfoQuery);
   }
 
   @Post()
   async createUser(@Body(CreateUserPipe) dto: CreateUserDto): Promise<void> {
-    this.printLoggerSerivce(dto);
-
     // await this.usersService.createUser(dto);
+
+    const command = new CreateUserCommand(dto.name, dto.email, dto.password);
+
+    return this.commandBus.execute(command); //커맨드 전송
   }
 
   private printLoggerSerivce(dto: CreateUserDto) {
